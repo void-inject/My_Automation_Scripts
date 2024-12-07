@@ -27,6 +27,7 @@ Before using the scripts, ensure the following dependencies are installed:
 - **Bash**
 - `arp-scan` (for `GMAIL-alerts.sh`)
 - `sendemail` (for `GMAIL-alerts.sh`)
+- `git` (for `git-pusher.sh`) 
 
 ## Setup
 
