@@ -11,6 +11,7 @@ This repository contains a collection of scripts designed for various automation
     - [Log-Recorder.sh](#log-recordersh)
     - [IP-Scoper.sh](#ip-scopersh)
     - [GMAIL-alerts.sh](#gmail-alertssh)
+    - [git-pusher.sh](#git-pushersh)
 - [Usage](#usage)
 - [Contributing](#contributing)
 - [License](#license)
@@ -84,6 +85,19 @@ This Bash script performs continuous ARP scans on a specified target network usi
 
 ---
 
+### git-pusher.sh
+
+#### Description:
+
+This Bash script automates the process of checking multiple Git repositories for uncommitted changes and keeping them up to date with the remote repository.
+
+#### Usage:
+
+```bash
+./git-pusher.sh
+```
+
+---
 ## Contributing
 
 Contributions are welcome! If you'd like to contribute to this project, please fork the repository, make your changes, and create a pull request. Make sure to follow the guidelines for code quality and documentation.
