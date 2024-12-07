@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
 # Define the static file containing the list of paths to check
-PATHS_FILE="paths.txt"
+PATHS_FILE="${HOME}/paths.txt"
 
 # Ensure the paths file exists
 if [ ! -f "$PATHS_FILE" ]; then
@@ -11,8 +11,12 @@ fi
 
 # Function to check if the local repository is behind the remote
 check_and_pull() {
+
+    echo " "
+    echo "---------------------------"
+    echo " "
+
     local repo_path=$1
-    echo "Checking if local repository is behind the remote at: $repo_path"
 
     # Navigate to the repo directory
     cd "$repo_path" || return
@@ -28,16 +32,18 @@ check_and_pull() {
         echo "Local repository is behind the remote. Pulling changes..."
         git pull
     else
-        echo "Local repository is up-to-date with the remote."
+        echo "$repo_path: Up2Date"
     fi
 
-    echo "-------------------------------------"
+    echo " "
+    echo "---------------------------"
+    echo " "
+    sleep 3
 }
 
 # Function to check for uncommitted changes and commit if found
 check_and_commit() {
     local repo_path=$1
-    echo "Checking repository at: $repo_path"
 
     # Navigate to the repo directory
     cd "$repo_path" || return
@@ -46,26 +52,21 @@ check_and_commit() {
     if [[ -n $(git status --porcelain) ]]; then
         echo "Uncommitted changes found in $repo_path"
 
-        # Show the changes before asking for the commit message
-        echo "The following changes have been made:"
-        git diff --color=auto
-        echo "-------------------------------------"
-
-        # Ask for commit message
-        read -pr "Enter commit message: " commit_message
-
         # Stage all changes and commit
         git add .
-        git commit -m "$commit_message"
+        git commit -m "auto-push"
 
         # Push changes to the remote repository
         git push
-        echo "Changes pushed to remote repository."
-    else
-        echo "No uncommitted changes in $repo_path"
-    fi
 
-    echo "-------------------------------------"
+        # Call the function to check if the local copy is behind the remote
+        check_and_pull "$repo_path"
+    else
+        echo "$repo_path: NoChange"
+
+        # Call the function to check if the local copy is behind the remote
+        check_and_pull "$repo_path"
+    fi
 }
 
 # Read each path from the static paths file and check commits for that path
@@ -81,11 +82,9 @@ while IFS= read -r path; do
     # Check if the path exists
     if [ ! -d "$path" ]; then
         echo "Warning: The path '$path' does not exist."
+        sleep 10
         continue
     fi
-
-    # Call the function to check if the local copy is behind the remote
-    check_and_pull "$path"
 
     # Call the function to check and commit for each directory
     check_and_commit "$path"
