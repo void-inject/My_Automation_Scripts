@@ -33,8 +33,8 @@ Before using the scripts, ensure the following dependencies are installed:
 
 1. Clone the repository:
 ```bash
-git clone https://github.com/yourusername/automation-scripts.git
-cd automation-scripts
+git https://github.com/void-inject/My_Automation_Scripts.git Automation_Scripts
+cd Automation_Scripts
 ```
 
 2. Make the scripts executable:
