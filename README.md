@@ -8,9 +8,9 @@ This repository contains a collection of scripts designed for various automation
 - [Requirements](#requirements)
 - [Setup](#setup)
 - [Scripts](#scripts)
-    - [Script 1](#script-1)
-    - [Script 2](#script-2)
-    - [Script 3](#script-3)
+    - [Log-Recorder.sh](#log-recordersh)
+    - [IP-Scoper.sh](#ip-scopersh)
+    - [GMAIL-alerts.sh](#gmail-alertssh)
 - [Usage](#usage)
 - [Contributing](#contributing)
 - [License](#license)
@@ -23,8 +23,9 @@ This repository provides several automation scripts that can be used in various 
 
 Before using the scripts, ensure the following dependencies are installed:
 
-- **Bash** 
-- 
+- **Bash**
+- `arp-scan` (for `GMAIL-alerts.sh`)
+- `sendemail` (for `GMAIL-alerts.sh`)
 
 ## Setup
 
@@ -34,19 +35,14 @@ git clone https://github.com/yourusername/automation-scripts.git
 cd automation-scripts
 ```
 
-2. If necessary, install any dependencies:
-
-	* arp-scan (for GMAIL-alerts)
-	* sendemail (for GMAIL-alerts)
-
-3. Make the scripts executable:
+2. Make the scripts executable:
 ```bash
 chmod +x *.sh
 ```
 
 ## Scripts
 
-### Script 1: `Log-Recorder.sh`
+### Log-Recorder.sh
 
 #### Description:
 
@@ -58,29 +54,35 @@ This Bash script is designed to create a logging mechanism for terminal sessions
 ./Log-Recorder.sh
 ```
 
-### Script 2: `IP-Scoper.sh`
+---
+
+### IP-Scoper.sh
 
 #### Description:
 
-This script generates a list of IP addresses for a specified target subnet and saves them to an output file. The output file is named in the format: `target-host.txt`, where _target_ is the given subnet (e.g., 192.168.1)
+This script generates a list of IP addresses for a specified target subnet and saves them to an output file. The output file is named in the format: `target-host.txt`, where _target_ is the given subnet (e.g., 192.168.1).
 
 #### Example Usage:
 
 ```bash
-./script.sh <TARGET_SUBNET>
+./IP-Scoper.sh <TARGET_SUBNET>
 ```
 
-### Script 3: `GMAIL-alerts.sh`
+---
+
+### GMAIL-alerts.sh
 
 #### Description:
 
 This Bash script performs continuous ARP scans on a specified target network using `arp-scan`. It detects new hosts that are not already listed in a known hosts file and logs them in a separate file. If a new host is found, the script sends an email notification with the host's details. The script sleeps for a random time between scans to avoid excessive network usage.
 
-#### Usage:
+#### Example Usage:
 
 ```bash
 ./GMAIL-alerts.sh 192.168.1.0/24 192-168-1-hosts.txt eth0
 ```
+
+---
 
 ## Contributing
 
