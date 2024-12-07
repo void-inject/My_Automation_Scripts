@@ -3,7 +3,7 @@
 # Function to display usage instructions
 usage() {
     echo "Usage: $0 <TARGET> <KNOWN_HOSTS_FILE> <INTERFACE>"
-    echo "Example: $0 192.168.1.0/24 192-168-1-hosts.txt eth0"
+    echo "Example: $0 192.168.1.0/24 192-168-1-host.txt eth0"
     echo
     echo "Arguments:"
     echo "  TARGET           The target subnet for ARP scan (e.g., 192.168.1.0/24)"
@@ -19,12 +19,12 @@ if [[ $# -lt 3 ]]; then
 fi
 
 # Input Arguments
-TARGET=$1      # Network to scan (e.g., 192.168.1.0/24)
-KNOWN_HOSTS=$2 # File containing a list of known hosts (IPs)
-INTERFACE=$3   # Network interface to use for the ARP scan
+TARGET=$1     # Network to scan (e.g., 192.168.1.0/24)
+KNOWN_HOST=$2 # File containing a list of known hosts (IPs)
+INTERFACE=$3  # Network interface to use for the ARP scan
 
 # Derive NEW_HOSTS file name from KNOWN_HOSTS
-NEW_HOSTS="${KNOWN_HOSTS/hosts/new}"
+NEW_HOST="${KNOWN_HOST/host/new}"
 
 # Email notification settings (configure as needed):
 FROM="" # Sender email address (leave blank if not using notifications)
@@ -35,9 +35,9 @@ i=0 # Scan counter
 k=0 # New host counter per scan
 
 # Ensure the NEW_HOSTS file exists and is writable
-if [ ! -w "${NEW_HOSTS}" ]; then
-    touch "${NEW_HOSTS}" || {
-        echo "Failed to create ${NEW_HOSTS}"
+if [ ! -w "${NEW_HOST}" ]; then
+    touch "${NEW_HOST}" || {
+        echo "Failed to create ${NEW_HOST}"
         exit 1
     }
 fi
@@ -55,14 +55,14 @@ while true; do
         host=$(echo "${line}" | awk '{print $1}')
 
         # Check if the host is already in the known hosts file
-        if ! grep -q "${host}" "${KNOWN_HOSTS}"; then
+        if ! grep -q "${host}" "${KNOWN_HOST}"; then
             # Increment new host counter
             ((k++))
 
             # Log the new host with a timestamp
             DATE=$(date '+%H:%M %d/%m/%Y') # Current timestamp
             echo "Found a new host: ${host}!"
-            echo "${i}.${k}: ${host} at ${DATE}" >>"${NEW_HOSTS}"
+            echo "${i}.${k}: ${host} at ${DATE}" >>"${NEW_HOST}"
 
             # Send an email notification (if configured)
             if [[ -n "${FROM}" && -n "${TO}" ]]; then
