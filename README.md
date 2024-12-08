@@ -10,8 +10,9 @@ This repository contains a collection of scripts designed for various automation
 - [Scripts](#scripts)
     - [Log-Recorder.sh](#log-recordersh)
     - [IP-Scoper.sh](#ip-scopersh)
-    - [GMAIL-alerts.sh](#gmail-alertssh)
     - [git-pusher.sh](#git-pushersh)
+    - [GMAIL-alerts.sh](#gmail-alertssh)
+    - [Telegram-alerts.sh](#telegram-alertssh)
 - [Usage](#usage)
 - [Contributing](#contributing)
 - [License](#license)
@@ -75,6 +76,20 @@ This script has 3 use-cases:
 
 ---
 
+### git-pusher.sh
+
+#### Description:
+
+This Bash script automates the process of checking multiple Git repositories for uncommitted changes and keeping them up to date with the remote repository.
+
+#### Usage:
+
+```bash
+./git-pusher.sh
+```
+
+---
+
 ### GMAIL-alerts.sh
 
 #### Description:
@@ -89,19 +104,17 @@ This Bash script performs continuous ARP scans on a specified target network usi
 
 ---
 
-### git-pusher.sh
+### Telegram-alerts.sh
 
 #### Description:
 
-This Bash script automates the process of checking multiple Git repositories for uncommitted changes and keeping them up to date with the remote repository.
+This Bash script performs continuous ARP scans on a specified target network using `arp-scan`. It detects new hosts that are not already listed in a known hosts file and logs them in a separate file. If a new host is found, the script sends a Telegram notification with the host's details. The script sleeps for a random time between scans to avoid excessive network usage.
 
-#### Usage:
+#### Example Usage:
 
 ```bash
-./git-pusher.sh
+./Telegram-alerts.sh 192.168.1.0/24 192-168-1-hosts.txt eth0
 ```
-
----
 
 ## Contributing
 
