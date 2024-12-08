@@ -12,6 +12,7 @@ This repository contains a collection of scripts designed for various automation
     - [IP-Scoper.sh](#ip-scopersh)
     - [GMAIL-alerts.sh](#gmail-alertssh)
     - [git-pusher.sh](#git-pushersh)
+    - [Status-checker.sh](#status-checkersh)
 - [Usage](#usage)
 - [Contributing](#contributing)
 - [License](#license)
@@ -99,6 +100,21 @@ This Bash script automates the process of checking multiple Git repositories for
 ```
 
 ---
+
+### Status-checker.sh
+
+#### Description:
+
+This Bash script automates the process of checking the availability of IP addresses listed in a text file. It removes unreachable IP addresses from the file, leaving only the ones that are reachable.
+
+#### Usage:
+
+```bash
+./Status-checker.sh <path/to/IP-list.txt>
+```
+
+---
+
 ## Contributing
 
 Contributions are welcome! If you'd like to contribute to this project, please fork the repository, make your changes, and create a pull request. Make sure to follow the guidelines for code quality and documentation.
