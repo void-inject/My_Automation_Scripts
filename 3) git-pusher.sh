@@ -29,10 +29,6 @@ check_and_pull() {
     else
         echo "$repo_path: Up2Date"
     fi
-
-    echo " "
-    echo "---------------------------"
-    echo " "
     sleep 3
 }
 
