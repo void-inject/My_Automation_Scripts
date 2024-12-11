@@ -16,11 +16,6 @@ check_and_pull() {
     echo "---------------------------"
     echo " "
 
-    local repo_path=$1
-
-    # Navigate to the repo directory
-    cd "$repo_path" || return
-
     # Fetch the latest changes from the remote
     git fetch
 
