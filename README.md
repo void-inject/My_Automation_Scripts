@@ -91,20 +91,6 @@ This Bash script automates the process of checking multiple Git repositories for
 
 ---
 
-### GMAIL-alerts.sh
-
-#### Description:
-
-This Bash script performs continuous ARP scans on a specified target network using `arp-scan`. It detects new hosts that are not already listed in a known hosts file and logs them in a separate file. If a new host is found, the script sends an email notification with the host's details. The script sleeps for a random time between scans to avoid excessive network usage.
-
-#### Example Usage:
-
-```bash
-./GMAIL-alerts.sh 192.168.1.0/24 192-168-1-hosts.txt eth0
-```
-
----
-
 ### Telegram-alerts.sh
 
 #### Description:
