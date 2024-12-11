@@ -62,8 +62,6 @@ clean_ips() {
     while IFS= read -r ip; do
         if ping -c 1 -W 1 "${ip}" &>/dev/null; then
             echo "${ip}" >>"${temp_file}"
-        else
-            echo "IP ${ip} is not reachable."
         fi
     done <"${file}"
 
