@@ -13,6 +13,7 @@ This repository contains a collection of scripts designed for various automation
     - [git-pusher.sh](#git-pushersh)
     - [GMAIL-alerts.sh](#gmail-alertssh)
     - [Telegram-alerts.sh](#telegram-alertssh)
+    - [IP-sorter.sh](ip-sortersh)
 - [Usage](#usage)
 - [Contributing](#contributing)
 - [License](#license)
@@ -26,9 +27,9 @@ This repository provides several automation scripts that can be used in various 
 Before using the scripts, ensure the following dependencies are installed:
 
 - **Bash**
-- `arp-scan` (for `GMAIL-alerts.sh`)
-- `sendemail` (for `GMAIL-alerts.sh`)
 - `git` (for `git-pusher.sh`) 
+- `arp-scan` (for `Telegram-alerts.sh`)
+- `nmap` (for `IP-sorter.sh`)
 
 ## Setup
 
@@ -115,6 +116,21 @@ This Bash script performs continuous ARP scans on a specified target network usi
 ```bash
 ./Telegram-alerts.sh 192.168.1.0/24 192-168-1-hosts.txt eth0
 ```
+
+---
+
+### IP-sorter.sh
+
+#### Description:
+
+This Bash script scans hosts using nmap for open TCP ports, extracts IPs and ports, and saves IPs to `port-<port>.txt` files.
+#### Example Usage:
+
+```bash
+./IP-sorter.sh 192-168-1-hosts.txt
+```
+
+---
 
 ## Contributing
 
