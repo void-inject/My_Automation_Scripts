@@ -11,7 +11,6 @@ This repository contains a collection of scripts designed for various automation
     - [Log-Recorder.sh](#log-recordersh)
     - [IP-Scoper.sh](#ip-scopersh)
     - [git-pusher.sh](#git-pushersh)
-    - [GMAIL-alerts.sh](#gmail-alertssh)
     - [Telegram-alerts.sh](#telegram-alertssh)
     - [IP-sorter.sh](ip-sortersh)
 - [Usage](#usage)
