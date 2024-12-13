@@ -13,6 +13,7 @@ This repository contains a collection of scripts designed for various automation
     - [git-pusher.sh](#git-pushersh)
     - [Telegram-alerts.sh](#telegram-alertssh)
     - [IP-sorter.sh](ip-sortersh)
+    - [Port-Watchdog.sh](#port-watchdogsh)
 - [Usage](#usage)
 - [Contributing](#contributing)
 - [License](#license)
@@ -113,6 +114,20 @@ This Bash script scans hosts using nmap for open TCP ports, extracts IPs and por
 
 ```bash
 ./IP-sorter.sh 192-168-1-hosts.txt
+```
+
+---
+
+### Port-Watchdog.sh
+
+#### Description
+
+This Bash script continuously checks whether a port is open, waiting five seconds between each execution. Once it finds an open port, it passes this information to Nmap to perform a service discovery and write the output to a file.
+
+#### Example Usage:
+
+```bash
+./Port-Watchdog.sh 192.168.1.1 3337
 ```
 
 ---
