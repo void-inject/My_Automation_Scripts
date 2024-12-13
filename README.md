@@ -14,6 +14,7 @@ This repository contains a collection of scripts designed for various automation
     - [Telegram-alerts.sh](#telegram-alertssh)
     - [IP-sorter.sh](ip-sortersh)
     - [Port-Watchdog.sh](#port-watchdogsh)
+    - [Banner-Grabber.sh](banner-grabbersh)
 - [Usage](#usage)
 - [Contributing](#contributing)
 - [License](#license)
@@ -30,6 +31,7 @@ Before using the scripts, ensure the following dependencies are installed:
 - `git` (for `git-pusher.sh`) 
 - `arp-scan` (for `Telegram-alerts.sh`)
 - `nmap` (for `IP-sorter.sh`)
+- `netcat` (for `Banner-Grabber.sh`)
 
 ## Setup
 
@@ -120,7 +122,7 @@ This Bash script scans hosts using nmap for open TCP ports, extracts IPs and por
 
 ### Port-Watchdog.sh
 
-#### Description
+#### Description:
 
 This Bash script continuously checks whether a port is open, waiting five seconds between each execution. Once it finds an open port, it passes this information to Nmap to perform a service discovery and write the output to a file.
 
@@ -128,6 +130,20 @@ This Bash script continuously checks whether a port is open, waiting five second
 
 ```bash
 ./Port-Watchdog.sh 192.168.1.1 3337
+```
+
+---
+
+### Banner-Grabber.sh
+
+#### Description
+
+This Bash script uses Netcat to grab banners on specified port from multiple hosts saved in a file.
+
+#### Example Usage:
+
+```bash
+./Banner-Grabber.sh
 ```
 
 ---
