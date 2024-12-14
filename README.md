@@ -1,6 +1,6 @@
 # Automation Scripts & Utilities
 
-This repository contains a collection of scripts designed for various automation tasks and general utilities. The scripts are intended to help automate repetitive tasks, improve workflow, and simplify day-to-day operations.
+This repository contains a collection of Bash scripts designed to automate repetitive tasks, streamline workflows, and simplify daily operations.
 
 ## Table of Contents
 
@@ -11,37 +11,37 @@ This repository contains a collection of scripts designed for various automation
     - [Log-Recorder.sh](#log-recordersh)
     - [IP-Scoper.sh](#ip-scopersh)
     - [git-pusher.sh](#git-pushersh)
-    - [Telegram-alerts.sh](#telegram-alertssh)
-    - [IP-sorter.sh](ip-sortersh)
-    - [Port-Watchdog.sh](#port-watchdogsh)
-    - [Banner-Grabber.sh](banner-grabbersh)
+    - [WatchDog.sh](#watchdogssh)
+    - [Banner-Grabber.sh](#banner-grabbersh)
 - [Usage](#usage)
 - [Contributing](#contributing)
 - [License](#license)
 
 ## Overview
 
-This repository provides several automation scripts that can be used in various environments, including Linux systems. These scripts are written in **Bash** and are designed for tasks such as Git management, system maintenance, and process automation.
+This repository offers several automation scripts for use in various environments, particularly Linux systems. The scripts are written in **Bash** and cover tasks such as Git management, system maintenance, and network operations.
 
 ## Requirements
 
-Before using the scripts, ensure the following dependencies are installed:
+Before using the scripts, make sure the following dependencies are installed:
 
 - **Bash**
-- `git` (for `git-pusher.sh`) 
-- `arp-scan` (for `Telegram-alerts.sh`)
-- `nmap` (for `IP-sorter.sh`)
-- `netcat` (for `Banner-Grabber.sh`)
+- `git` (required for `git-pusher.sh`)
+- `arp-scan` (required for `Telegram-alerts.sh`)
+- `nmap` (required for `IP-scoper.sh`)
+- `netcat` (required for `Banner-Grabber.sh`)
 
 ## Setup
 
 1. Clone the repository:
+
 ```bash
-git https://github.com/void-inject/My_Automation_Scripts.git Automation_Scripts
+git clone https://github.com/void-inject/My_Automation_Scripts.git Automation_Scripts
 cd Automation_Scripts
 ```
 
 2. Make the scripts executable:
+
 ```bash
 chmod +x *.sh
 ```
@@ -52,7 +52,7 @@ chmod +x *.sh
 
 #### Description:
 
-This Bash script is designed to create a logging mechanism for terminal sessions.
+This script creates a logging mechanism for terminal sessions, making it easier to track and review terminal activity.
 
 #### Usage:
 
@@ -66,15 +66,17 @@ This Bash script is designed to create a logging mechanism for terminal sessions
 
 #### Description:
 
-This script has 3 use-cases:
-1. generates a list of IP addresses for a specified target subnet and saves them to an output file. The output file is named in the format: `target-host.txt`, where _target_ is the given subnet (e.g., 192.168.1).
-2. automates the process of checking the availability of IP addresses listed in a text file. It removes unreachable IP addresses from the file, leaving only the ones that are reachable.
-3. you can use both functions at once.
+This script has three main use cases:
+
+1. Generate a list of IP addresses for a given subnet and save them in an output file. The output file is named based on the subnet (e.g., `192.168.1.txt`).
+2. Check the availability of IP addresses listed in a text file, removing unreachable IPs.
+3. Perform a scan of hosts using `nmap` to find open TCP ports and save the results to files named `port-<port>.txt`.
+4. Optionally, combine all three functions.
 
 #### Example Usage:
 
 ```bash
-./IP-Scoper.sh -g 192.168.1 -s 192-168-1-host.txt
+./IP-Scoper.sh -g 192.168.1 -s 192-168-1-host.txt -f 192-168-1-host.txt
 ```
 
 ---
@@ -83,7 +85,7 @@ This script has 3 use-cases:
 
 #### Description:
 
-This Bash script automates the process of checking multiple Git repositories for uncommitted changes and keeping them up to date with the remote repository.
+This script automates the process of checking multiple Git repositories for uncommitted changes and keeps them up to date with the remote repository.
 
 #### Usage:
 
@@ -93,65 +95,41 @@ This Bash script automates the process of checking multiple Git repositories for
 
 ---
 
-### Telegram-alerts.sh
+### WatchDog.sh
 
 #### Description:
 
-This Bash script performs continuous ARP scans on a specified target network using `arp-scan`. It detects new hosts that are not already listed in a known hosts file and logs them in a separate file. If a new host is found, the script sends a Telegram notification with the host's details. The script sleeps for a random time between scans to avoid excessive network usage.
+This script offers two key functionalities:
+
+1. Continuously perform ARP scans on a target network using `arp-scan`, detecting new hosts and logging them in a separate file. It sends notifications to Telegram with host details when new hosts are detected. The script randomizes scan intervals to reduce network load.
+2. Continuously check if a specified port is open on a host. Once the port is found open, it uses `nmap` to perform service discovery and logs the results.
 
 #### Example Usage:
 
 ```bash
-./Telegram-alerts.sh 192.168.1.0/24 192-168-1-hosts.txt eth0
-```
-
----
-
-### IP-sorter.sh
-
-#### Description:
-
-This Bash script scans hosts using nmap for open TCP ports, extracts IPs and ports, and saves IPs to `port-<port>.txt` files.
-#### Example Usage:
-
-```bash
-./IP-sorter.sh 192-168-1-hosts.txt
-```
-
----
-
-### Port-Watchdog.sh
-
-#### Description:
-
-This Bash script continuously checks whether a port is open, waiting five seconds between each execution. Once it finds an open port, it passes this information to Nmap to perform a service discovery and write the output to a file.
-
-#### Example Usage:
-
-```bash
-./Port-Watchdog.sh 192.168.1.1 3337
+./Telegram-alerts.sh -hp 192.168.1.0/24 80 192-168-1-hosts.txt eth0
 ```
 
 ---
 
 ### Banner-Grabber.sh
 
-#### Description
+#### Description:
 
-This Bash script uses Netcat to grab banners on specified port from multiple hosts saved in a file.
+This script uses `netcat` and `curl` to grab banners from a specified port on multiple hosts, either from a file or a single IP.
 
 #### Example Usage:
 
 ```bash
-./Banner-Grabber.sh
+./Banner-Grabber.sh 
 ```
 
 ---
 
 ## Contributing
 
-Contributions are welcome! If you'd like to contribute to this project, please fork the repository, make your changes, and create a pull request. Make sure to follow the guidelines for code quality and documentation.
+Contributions are welcome! To contribute, fork the repository, make your changes, and submit a pull request. Please adhere to the project's code quality and documentation guidelines.
 
 ## License
 
-This project is licensed under the MIT License - see the LICENSE file for details.
+This project is licensed under the MIT License. See the LICENSE file for more details.
