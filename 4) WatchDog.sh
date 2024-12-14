@@ -8,43 +8,38 @@ LOG_FILE="watchdog.log"
 
 # Function to display usage instructions
 usage() {
-    echo "Usage: "
-    echo "  $0 [-p <TARGET> <WATCHED_PORT>]"
-    echo "  $0 [-h <TARGET> <KNOWN_HOSTS_FILE> <INTERFACE>]"
-    echo "  $0 [-hp <TARGET> <WATCHED_PORT> <KNOWN_HOSTS_FILE> <INTERFACE>]"
+    echo "Usage: $0 [OPTIONS]"
     echo
-    echo "Flags:"
+    echo "Options:"
+    echo "  -p <IP> <WATCHED_PORT>"
+    echo "  -h <IP_RANGE> <KNOWN_HOSTS_FILE> <INTERFACE>"
+    echo
+    echo "Info:"
     echo "  -p  Monitor a specific port on a target (e.g., 192.168.1.1 22)"
-    echo "  -h  Perform host discovery (requires target, known hosts file, and interface)"
-    echo "  -hp Combine host discovery and port monitoring"
+    echo "  -h  Perform host discovery (e.g., 192.168.1.0/24 192-168-1-host.txt eth0)"
     exit 1
 }
 
 # Variables for options
-MODE=""
-TARGET=""
+IP=""
+IP_RANGE=""
 WATCHED_PORT=""
 KNOWN_HOSTS_FILE=""
 INTERFACE=""
 
 # Parse flags and arguments
 parse_flags() {
-    while getopts ":p:h:" opt; do
+    while getopts "p:h:" opt; do
         case $opt in
         p)
-            MODE="p"
-            TARGET=$OPTARG
-            WATCHED_PORT=${!OPTIND} # Get the next argument
+            IP="$OPTARG"
+            WATCHED_PORT="$2"
             shift 2
             ;;
         h)
-            if [[ $MODE == "p" ]]; then
-                MODE="hp"
-            else
-                MODE="h"
-            fi
-            KNOWN_HOSTS_FILE=${!OPTIND} # Get the next argument
-            INTERFACE=${!OPTIND+1}      # Get the following argument
+            IP_RANGE="$OPTARG"
+            KNOWN_HOSTS_FILE="$2"
+            INTERFACE="$3"
             shift 3
             ;;
         *)
@@ -56,22 +51,19 @@ parse_flags() {
 
 # Validate inputs
 validate_inputs() {
-    if [ -z "$MODE" || -z "$TARGET" ]; then
+    if [ -z "$IP" ] && [ -z "$IP_RANGE" ]; then
         echo "Error: Missing required parameters."
         usage
     fi
 }
 
-# Derive NEW_HOSTS file name from KNOWN_HOSTS_FILE if provided
+# Setup new host file
 setup_new_host_file() {
-    NEW_HOST=""
-    if [ -n "$KNOWN_HOSTS_FILE" ]; then
-        NEW_HOST="${KNOWN_HOSTS_FILE/host/new}"
-        touch "$NEW_HOST" || {
-            echo "Failed to create ${NEW_HOST}"
-            exit 1
-        }
-    fi
+    NEW_HOST="${KNOWN_HOSTS_FILE%.txt}-new.txt"
+    touch "$NEW_HOST" || {
+        echo "Failed to create ${NEW_HOST}"
+        exit 1
+    }
 }
 
 # Function to send a message via Telegram
@@ -84,66 +76,50 @@ send_telegram_message() {
     }
 }
 
-# Function to perform service discovery
-service_discovery() {
-    local host=$1
-    local port=$2
-    nmap -sV -p "$port" "$host" >>"${LOG_FILE}"
-}
-
-# Function for host discovery
+# Host discovery function
 host_discovery() {
-    sudo arp-scan -x -I "$INTERFACE" "$TARGET" | while read -r line; do
-        local host=$(echo "$line" | awk '{print $1}')
+    sudo arp-scan -x -I "$INTERFACE" "$IP_RANGE" | while read -r line; do
+        host=$(echo "$line" | awk '{print $1}')
+        [ -z "$host" ] && continue
         if ! grep -q "$host" "$KNOWN_HOSTS_FILE"; then
-            local DATE=$(date '+%H:%M %d/%m/%Y')
+            DATE=$(date '+%H:%M %d/%m/%Y')
             echo "New host detected: $host at $DATE"
             echo "$host" >>"$NEW_HOST"
-            send_telegram_message "\ud83d\udea8 New host detected: $host at $DATE"
+            send_telegram_message "🚨 New host detected: $host at $DATE"
         fi
     done
 }
 
-# Function to monitor port and send alerts
+# Port monitoring function
 monitor_port() {
-    echo "Monitoring port $WATCHED_PORT on $TARGET"
+    echo "Monitoring port $WATCHED_PORT on $IP"
     while true; do
-        port_scan=$(docker run --network=host -it --rm \
+        if port_scan=$(docker run --network=host -it --rm \
             --name rustscan rustscan/rustscan:2.1.1 \
-            -a "$TARGET" -g -p "$WATCHED_PORT")
-
-        if [ -n "$port_scan" ]; then
-            echo "Port $WATCHED_PORT is open on $TARGET"
-            service_discovery "$TARGET" "$WATCHED_PORT"
-            send_telegram_message "\ud83d\udea8 Port $WATCHED_PORT is now open on $TARGET. Service details logged."
+            -a "$IP" -g -p "$WATCHED_PORT"); then
+            echo "Port $WATCHED_PORT is open on $IP"
+            send_telegram_message "🚨 Port $WATCHED_PORT is now open on $IP. Details logged."
             break
         else
-            echo "Port $WATCHED_PORT is not open yet. Sleeping for 5 seconds..."
-            sleep 5
+            echo "Port $WATCHED_PORT is not open yet. Retrying in 300 seconds..."
+            sleep 300
         fi
     done
 }
 
-# Combined Host Discovery and Port Monitoring
-combined_mode() {
-    echo "Starting combined host discovery and port monitoring"
-    host_discovery
-    monitor_port
-}
+# Main execution
+parse_flags "$@"
+validate_inputs
 
-# Main execution based on the mode
-case $MODE in
-p)
-    monitor_port
-    ;;
-h)
-    echo "Starting host discovery on $TARGET"
-    host_discovery
-    ;;
-hp)
-    combined_mode
-    ;;
-*)
-    usage
-    ;;
-esac
+# Run both functions in the background if both are provided
+if [ -n "$IP" ] && [ -n "$WATCHED_PORT" ]; then
+    monitor_port &
+fi
+
+if [ -n "$IP_RANGE" ] && [ -n "$KNOWN_HOSTS_FILE" ] && [ -n "$INTERFACE" ]; then
+    setup_new_host_file
+    host_discovery &
+fi
+
+# Wait for both background processes to finish
+wait
