@@ -38,8 +38,8 @@ parse_flags() {
             ;;
         h)
             IP_RANGE="$OPTARG"
-            KNOWN_HOSTS_FILE="$2"
-            INTERFACE="$3"
+            KNOWN_HOSTS_FILE="$3"
+            INTERFACE="$4"
             shift 3
             ;;
         *)
