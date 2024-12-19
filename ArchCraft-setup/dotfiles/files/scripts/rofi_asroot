@@ -17,7 +17,7 @@ layout=`cat ${RASI} | grep 'USE_ICON' | cut -d'=' -f2`
 if [[ "$layout" == 'NO' ]]; then
 	option_1=" Alacritty"
 	option_2=" Thunar"
-	option_3=" Geany"
+	option_3=" Kate"
 	option_4=" Ranger"
 	option_5=" Vim"
 else
@@ -49,7 +49,7 @@ run_cmd() {
 	elif [[ "$1" == '--opt2' ]]; then
 		bspasroot 'dbus-run-session thunar'
 	elif [[ "$1" == '--opt3' ]]; then
-		bspasroot geany
+		bspasroot kate
 	elif [[ "$1" == '--opt4' ]]; then
 		bspasroot "$term -e ranger"
 	elif [[ "$1" == '--opt5' ]]; then
