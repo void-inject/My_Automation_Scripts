@@ -66,6 +66,20 @@ function install_with_flatpak() {
     done
 }
 
+function bspwm_setup() {
+    print_message "Installing BSPWM using ArchCraft BSPWM..."
+    git clone https://github.com/archcraft-os/archcraft-bspwm.git || {
+        print_error "Failed to clone BSPWM repository"
+        exit 1
+    }
+    cd archcraft-bspwm || exit
+    sudo chmod +x build.sh
+    ./build.sh || print_error "Failed to build and install BSPWM"
+    cd ..
+    rm -rf archcraft-bspwm
+    print_message "BSPWM installation completed!"
+}
+
 function create_distrobox_containers() {
     for container in "${distrobox_containers[@]}"; do
         local name=$(echo "$container" | awk '{print $1}')
@@ -130,17 +144,7 @@ flatpak remote-add --if-not-exists flathub https://flathub.org/repo/flathub.flat
 print_message "Do you want to install a desktop environment (BSPWM)? [y/N]"
 read -r install_de
 if [[ $install_de == "y" || $install_de == "Y" ]]; then
-    print_message "Installing BSPWM using ArchCraft BSPWM..."
-    git clone https://github.com/archcraft-os/archcraft-bspwm.git || {
-        print_error "Failed to clone BSPWM repository"
-        exit 1
-    }
-    cd archcraft-bspwm || exit
-    sudo chmod +x build.sh
-    ./build.sh || print_error "Failed to build and install BSPWM"
-    cd ..
-    rm -rf archcraft-bspwm
-    print_message "BSPWM installation completed!"
+    bspwm_setup
 fi
 
 install_with_pacman "${development_tools[@]}"
@@ -158,6 +162,9 @@ read -p "Enter your Git email: " git_email
 git config --global user.name "$git_username"
 git config --global user.email "$git_email"
 git config --global core.editor "vim"
+
+# install Brave
+curl -fsS https://dl.brave.com/install.sh | sh
 
 # Remove Firefox
 remove_firefox
