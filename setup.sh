@@ -16,12 +16,11 @@ exec > >(tee -i "$LOG_FILE") 2>&1
 # --- Package lists ---
 required_tools=(
     "base-devel"
-    "archcraft-bspwm"
     "git"
     "curl"
-    "htop"
     "flatpak"
 )
+
 development_tools=(
     "kate"
     "meld"
@@ -33,20 +32,24 @@ development_tools=(
     "distrobox"
     "podman"
 )
+
 entertainment_tools=(
     "spotify-launcher"
     "ffmpeg"
     "obs-studio"
     "steam"
 )
+
 docker_packages=(
     "docker"
     "docker-compose"
 )
+
 flatpak_packages=(
     "org.prismlauncher.PrismLauncher"
     "dev.vencord.Vesktop"
 )
+
 distrobox_containers=(
     "debian docker.io/library/debian:stable-backports"
     "kali docker.io/kalilinux/kali-rolling:latest"
@@ -131,15 +134,6 @@ function aur_setup() {
     fi
 }
 
-function config_setup() {
-    cd dotfiles || {
-        print_error "Dotfiles directory not found"
-        exit 1
-    }
-    sudo chmod +x build.sh
-    ./build.sh
-}
-
 function create_distrobox_containers() {
     for container in "${distrobox_containers[@]}"; do
         local name=$(echo "$container" | awk '{print $1}')
@@ -163,35 +157,22 @@ function remove_firefox() {
 }
 
 # --- Main script execution ---
-if confirm_action "Update the system?"; then
-    print_message "Updating the system..."
-    sudo pacman -Syu --noconfirm || {
-        print_error "Failed to update the system"
-        exit 1
-    }
-fi
+print_message "Updating the system..."
+sudo pacman -Syu --noconfirm || {
+    print_error "Failed to update the system"
+    exit 1
+}
+print_message "Installing required tools"
+install_with_pacman "${required_tools[@]}"
 
-if confirm_action "Install required tools?"; then
-    install_with_pacman "${required_tools[@]}"
-fi
+print_message "Enabling Multilib repository (if not already enabled)..."
+multilib_setup
 
-if confirm_action "Enable Multilib repository?"; then
-    print_message "Enabling Multilib repository (if not already enabled)..."
-    multilib_setup
-fi
+print_message "Installing yay (AUR helper)..."
+aur_setup
 
-if confirm_action "Install yay (AUR helper)?"; then
-    print_message "Installing yay (AUR helper)..."
-    aur_setup
-fi
-
-if confirm_action "Configure Flatpak?"; then
-    flatpak remote-add --if-not-exists flathub https://flathub.org/repo/flathub.flatpakrepo
-fi
-
-if confirm_action "Setup desktop environment?"; then
-    config_setup
-fi
+print_message "Setup flatpak"
+flatpak remote-add --if-not-exists flathub https://flathub.org/repo/flathub.flatpakrepo
 
 if confirm_action "Install development tools?"; then
     install_with_pacman "${development_tools[@]}"
@@ -213,21 +194,16 @@ if confirm_action "Create Distrobox containers?"; then
     create_distrobox_containers
 fi
 
-if confirm_action "Configure Git?"; then
-    print_message "Configuring Git..."
-    read -p "Enter your Git username: " git_username
-    read -p "Enter your Git email: " git_email
-    git config --global user.name "$git_username"
-    git config --global user.email "$git_email"
-    git config --global core.editor "vim"
-fi
+print_message "Configuring Git..."
+read -p "Enter your Git username: " git_username
+read -p "Enter your Git email: " git_email
+git config --global user.name "$git_username"
+git config --global user.email "$git_email"
+git config --global core.editor "vim"
 
 if confirm_action "Install Brave browser?"; then
-    curl -fsS https://dl.brave.com/install.sh | sh
-fi
-
-if confirm_action "Remove Firefox?"; then
     remove_firefox
+    curl -fsS https://dl.brave.com/install.sh | sh
 fi
 
 if confirm_action "Clean up unused packages and cache?"; then
